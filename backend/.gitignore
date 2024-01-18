@@ -1,0 +1,8 @@
+#Gitignore template for Node project
+
+/node_modules
+/build
+/npm-debug.log
+.nyc
+.env
+.DS_Store
