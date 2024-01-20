@@ -9,6 +9,7 @@
   "author": "Gaetan Redoutez",
   "license": "ISC",
   "dependencies": {
+    "bcrypt": "^5.1.1",
     "express": "^4.18.2",
     "mongoose": "^8.1.0"
   }

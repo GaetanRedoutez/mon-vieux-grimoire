@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 
+const userRoutes = require('./routes/user');
 const bookRoutes = require('./routes/book');
 
 const app = express();
@@ -17,10 +18,15 @@ async function main() {
     await mongoose.connect(connectionString);
     console.log('Connection to MongoDB with Mongoose : Success !');
   } catch (error) {
-    console.error('Connection to MongoDB with Mongoose : Failed !');
+    console.error(
+      'Connection to MongoDB with Mongoose : Failed !',
+      ' Error : ',
+      error
+    );
   }
 }
 
 app.use('/api/books', bookRoutes);
+app.use('/api/auth', userRoutes);
 
 module.exports = app;
