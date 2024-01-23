@@ -1,94 +1,218 @@
+const fs = require('node:fs');
+
 const Book = require('../models/Book');
 
-//TODO Commenter la fonction
+/**
+ * Controller to get all books
+ *
+ * @param {*} req HTTP request
+ * @param {*} res HTTP response
+ * @param {*} next Go to the next middleware
+ *
+ * Success Response (Status 200):
+ *   Returns an array of books in JSON format
+ *
+ * Error Response (Status 404):
+ *   Returns the error in JSON format
+ */
 exports.getAllBooks = (req, res, next) => {
+  // Use find method to get all books
   Book.find()
     .then((books) => res.status(200).json(books))
-    .catch((error) => res.status(400).json({ error }));
+    .catch((error) => res.status(404).json({ error }));
 };
 
-//TODO Commenter la fonction
+/**
+ * Controller to get best rating books
+ *
+ * @param {*} req HTTP request
+ * @param {*} res HTTP response
+ * @param {*} next Go to the next middleware
+ *
+ * Success Response (Status 200):
+ *   Returns an array of books in JSON format
+ *
+ * Error Response (Status 404):
+ *   Returns the error in JSON format
+ */
 exports.getBestRatingBooks = (req, res, next) => {
-  delete req.body._id;
-  console.log('Request body:', req.body);
+  // Use find method to get all books
   Book.find()
     .then((books) => {
+      // Sort books by average rating
       const sortedBooks = [...books].sort(
         (a, b) => b.averageRating - a.averageRating
       );
 
+      // Create a new array with 3 best average rating books
       const bestBooks = sortedBooks.slice(0, 3);
 
       res.status(200).json(bestBooks);
     })
-    .catch((error) => res.status(400).json({ error }));
+    .catch((error) => res.status(404).json({ error }));
 };
 
-//TODO Commenter la fonction
+/**
+ * Controller to get one book
+ *
+ * @param {*} req HTTP request
+ * @param {*} res HTTP response
+ * @param {*} next Go to the next middleware
+ *
+ * Success Response (Status 200):
+ *   Returns a book in JSON format
+ *
+ * Error Response (Status 404):
+ *   Returns the error in JSON format
+ */
 exports.getOneBook = (req, res, next) => {
+  // Use findOne method to get one book by id
   Book.findOne({ _id: req.params.id })
     .then((book) => res.status(200).json(book))
     .catch((error) => res.status(404).json({ error }));
 };
 
-//TODO Commenter la fonction
+/**
+ * Controller to create a new book
+ *
+ * @param {*} req HTTP request
+ * @param {*} res HTTP response
+ * @param {*} next Go to the next middleware
+ *
+ * Success Response (Status 201):
+ *   Returns a message "Book added!" in JSON format
+ *
+ * Error Response (Status 400):
+ *   Returns the error in JSON format
+ */
 exports.createBook = (req, res, next) => {
+  // Parse req.body.book to create a bookObject
   const bookObject = JSON.parse(req.body.book);
+
+  // Remove _id and _userId from bookObject to prevent tampering
   delete bookObject._id;
   delete bookObject._userId;
+
+  // Create a new book instance with data from bookObject and file data
   const book = new Book({
+    // The database will automatically assign an ID to the book object upon saving.
     ...bookObject,
-    userId: req.auth.userId,
+    userId: req.auth.userId, // Use the userId provided by the authentication middleware
     imageUrl: `${req.protocol}://${req.get('host')}/images/${
       req.file.filename
     }`,
   });
+
+  // Save the book to the database
   book
     .save()
-    .then(() => res.status(201).json({ message: 'Book added !' }))
-    .catch((error) => {
-      res.status(400).json({ error });
-    });
-};
-
-//TODO Commenter la fonction
-exports.deleteBook = (req, res, next) => {
-  Book.deleteOne({ _id: req.params.id })
-    .then(() => res.status(200).json({ message: 'Book deleted !' }))
-    .catch((error) => res.status(404).json({ error }));
-};
-
-//TODO Commenter la fonction
-exports.modifyBook = (req, res, next) => {
-  let updatedBook = {};
-  if (!req.body.book) {
-    delete req.body._id;
-    delete req.body.userId;
-    updatedBook = {
-      ...req.body,
-      userId: req.auth.userId,
-    };
-  } else {
-    const bookObject = JSON.parse(req.body.book);
-    delete bookObject._id;
-    delete bookObject.userId;
-    updatedBook = {
-      ...bookObject,
-      userId: req.auth.userId,
-      imageUrl: `${req.protocol}://${req.get('host')}/images/${
-        req.file.filename
-      }`,
-    };
-  }
-  console.log(updatedBook);
-
-  Book.updateOne({ _id: req.params.id }, updatedBook)
-    .then(() => res.status(201).json({ message: 'Book updated !' }))
+    .then(() => res.status(201).json({ message: 'Book added!' }))
     .catch((error) => res.status(400).json({ error }));
 };
 
-//TODO Commenter la fonction
+/**
+ * Controller to delete a book and its associated file
+ *
+ * @param {*} req HTTP request
+ * @param {*} res HTTP response
+ * @param {*} next Go to the next middleware
+ *
+ * Success Response (Status 200):
+ *   Returns a message "Book deleted!" in JSON format
+ *
+ * Error Response (Status 401 or 500):
+ *   Returns an error message in JSON format
+ */
+exports.deleteBook = (req, res, next) => {
+  // Use the findOne method to retrieve data of the book to be deleted
+  Book.findOne({ _id: req.params.id })
+    .then((book) => {
+      // Check if the request userId matches the auth userId to prevent tampering
+      if (book.userId !== req.auth.userId) {
+        res.status(401).json({ message: 'Not authorized!' });
+      } else {
+        // Create a path to the file that needs to be deleted
+        const filename = book.imageUrl.split('/images/')[1];
+        const path = `images/${filename}`;
+
+        // Use the unlink method from Node's fs module to delete the file
+        fs.unlink(path, () => {
+          // Use the deleteOne method to delete the database entry
+          Book.deleteOne({ _id: req.params.id })
+            .then(() => res.status(200).json({ message: 'Book deleted!' }))
+            .catch((error) => res.status(500).json({ error }));
+        });
+      }
+    })
+    .catch((error) => res.status(500).json({ error }));
+};
+
+/**
+ * Controller to modify a book
+ *
+ * @param {*} req HTTP request
+ * @param {*} res HTTP response
+ * @param {*} next Go to the next middleware
+ *
+ * Success Response (Status 201):
+ *   Returns a message "Book updated!" in JSON format
+ *
+ * Error Response (Status 401 or 500):
+ *   Returns an error message in JSON format
+ */
+exports.modifyBook = (req, res, next) => {
+  // Use the findOne method to retrieve data of the book to be modified
+  Book.findOne({ _id: req.params.id })
+    .then((book) => {
+      // Check if the request userId matches the auth userId to prevent tampering
+      if (book.userId !== req.auth.userId) {
+        res.status(401).json({ message: 'Not authorized!' });
+      } else {
+        // Prepare a variable to contain modifications
+        let updatedBook = {};
+
+        // If modifications don't concern the file
+        if (!req.body.book) {
+          // Remove _id and _userId from req.body to prevent tampering
+          delete req.body._id;
+          delete req.body.userId;
+
+          // Set updatedBook with modification info
+          updatedBook = {
+            ...req.body,
+            userId: req.auth.userId,
+          };
+
+          // If modifications concern the file
+        } else {
+          // Parse req.body.book to create a bookObject
+          const bookObject = JSON.parse(req.body.book);
+
+          // Remove _id and _userId from bookObject to prevent tampering
+          delete bookObject._id;
+          delete bookObject.userId;
+
+          // Set updatedBook with modification info
+          updatedBook = {
+            ...bookObject,
+            userId: req.auth.userId,
+            imageUrl: `${req.protocol}://${req.get('host')}/images/${
+              req.file.filename
+            }`,
+          };
+        }
+
+        // Use the updateOne method to apply modifications
+        Book.updateOne({ _id: req.params.id }, updatedBook)
+          .then(() => res.status(201).json({ message: 'Book updated!' }))
+          .catch((error) => res.status(500).json({ error }));
+      }
+    })
+    .catch((error) => res.status(500).json({ error }));
+};
+
 //FIXME Quand on poste la nouvelle note on a plus l'affichage du livre
+//TODO Commentaire
 exports.rateBook = (req, res, next) => {
   Book.findOne({ _id: req.params.id })
     .then((book) => {

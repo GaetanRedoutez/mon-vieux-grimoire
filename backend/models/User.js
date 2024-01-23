@@ -5,4 +5,9 @@ const userSchema = mongoose.Schema({
   password: { type: String, required: true },
 });
 
+/**
+ * Mongoose model:
+ * - email: String (required, unique) - Email address of the user
+ * - password: String (required) - Hashed password of the user
+ */
 module.exports = mongoose.model('User', userSchema);

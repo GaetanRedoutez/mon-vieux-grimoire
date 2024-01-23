@@ -9,13 +9,13 @@ const bookRoutes = require('./routes/book');
 const app = express();
 app.use(bodyParser.json());
 
-main().catch((err) => console.log(err));
-
 async function main() {
+  // MongoDB connection string
   const connectionString =
     'mongodb+srv://redoutezgaetan:PVG7aTPwZdUdmPBB@mon-vieux-grimoire-clus.gxf76jf.mongodb.net/mon-vieux-grimoire?retryWrites=true&w=majority';
 
   try {
+    // Connect to MongoDB using Mongoose
     await mongoose.connect(connectionString);
     console.log('Connection to MongoDB with Mongoose : Success !');
   } catch (error) {
@@ -27,6 +27,9 @@ async function main() {
   }
 }
 
+main().catch((err) => console.log(err));
+
+// Middleware for handling CORS headers
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader(
@@ -40,10 +43,11 @@ app.use((req, res, next) => {
   next();
 });
 
+// Routes for handling books and user authentication
 app.use('/api/books', bookRoutes);
 app.use('/api/auth', userRoutes);
+
+// Serve static images from the 'images' directory
 app.use('/images', express.static(path.join(__dirname, 'images')));
 
 module.exports = app;
-
-//TODO Commenter le fichier
