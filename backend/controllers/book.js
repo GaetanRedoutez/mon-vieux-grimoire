@@ -211,22 +211,36 @@ exports.modifyBook = (req, res, next) => {
     .catch((error) => res.status(500).json({ error }));
 };
 
-//FIXME Quand on poste la nouvelle note on a plus l'affichage du livre
-//TODO Commentaire
+// Controller to rate a book
+//
+// @param {*} req HTTP request
+// @param {*} res HTTP response
+// @param {*} next Go to the next middleware
+//
+// Success Response (Status 201):
+//   Returns the updated book in JSON format
+//
+// Error Response (Status 404):
+//   Returns an error message in JSON format if the book is not found
 exports.rateBook = (req, res, next) => {
+  // Find the book by its ID
   Book.findOne({ _id: req.params.id })
     .then((book) => {
+      // Check if the book exists
       if (!book) {
         return res.status(404).json({ error });
       }
 
+      // Create a new rating object with the user's ID and the provided rating
       newRating = {
         userId: req.auth.userId,
         grade: req.body.rating,
       };
 
+      // Add the new rating to the book's ratings array
       book.ratings.push(newRating);
 
+      // Calculate the average rating for the book
       let averageRating = 0.0;
       for (let index = 0; index < book.ratings.length; index++) {
         const element = book.ratings[index].grade;
@@ -235,10 +249,14 @@ exports.rateBook = (req, res, next) => {
 
       book.averageRating = averageRating / book.ratings.length;
 
+      // Save the updated book with the new rating
       book
         .save()
-        .then(res.status(201).json({ book, ratings }))
+        .then((book) => res.status(201).json(book))
         .catch((error) => res.status(404).json({ error: error.message }));
     })
     .catch((error) => res.status(404).json({ error }));
 };
+
+//FIXME vérifier les renvois d'erreur lors de connexion non autorisé
+//FIXME controler si un utilisateur à déjà mis une note avant d'ajouter un rating
