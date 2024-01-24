@@ -1,9 +1,11 @@
 # Mon Vieux Grimoire - Backend
-============================
-Bienvenue dans le backend de "Mon Vieux Grimoire" ! Ce projet propose une API documentée avec Swagger, offrant diverses fonctionnalités. Le frontend correspondant est fourni par OPC, et vous pouvez le trouver ici.
+Bienvenue dans le backend de "Mon Vieux Grimoire" ! Ce projet propose une API documentée avec Swagger. Le frontend correspondant est fourni par OPC, et vous pouvez le trouver ici.
+
+## Prérequis
+1. Avoir Node.JS d'installé
 
 ## Documentation API
-Une documentation Swagger détaillée est disponible à l'adresse /api-docs. Vous y trouverez une liste complète des routes disponibles, accompagnées de schémas pour faciliter la compréhension. Pour accéder aux routes protégées, veuillez suivre ces étapes :
+Une documentation Swagger détaillée est disponible à l'adresse /api-docs. Vous y trouverez une liste complète des routes disponibles, accompagnées des schémas pour faciliter la compréhension. Pour accéder aux routes protégées, veuillez suivre ces étapes :
 
 1. Obtenez un Bearer Token en utilisant la route de login.
 2. Ajoutez le Bearer Token dans la case "Authorize" pour accéder aux routes protégées.
