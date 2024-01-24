@@ -26,6 +26,6 @@ module.exports = (req, res, next) => {
     // Continue to the next middleware
     next();
   } catch (error) {
-    res.status(401).json({ error });
+    return res.status(401).json({ error });
   }
 };

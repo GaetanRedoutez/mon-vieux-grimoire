@@ -66,7 +66,7 @@ router.get('/bestrating', bookControl.getBestRatingBooks);
 
 /**
  * @swagger
- * /api/books/:id:
+ * /api/books/{id}:
  *   get:
  *     tags:
  *       - Books
@@ -89,7 +89,7 @@ router.get('/:id', bookControl.getOneBook);
 
 /**
  * @swagger
- * /api/books/:id:
+ * /api/books/{id}:
  *   delete:
  *     tags:
  *       - Books
@@ -116,7 +116,7 @@ router.delete('/:id', auth, bookControl.deleteBook);
 
 /**
  * @swagger
- * /api/books/:id:
+ * /api/books/{id}:
  *   put:
  *     tags:
  *       - Books

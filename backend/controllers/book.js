@@ -82,7 +82,7 @@ exports.getOneBook = (req, res, next) => {
  * Success Response (Status 201):
  *   Returns a message "Book added!" in JSON format
  *
- * Error Response (Status 400):
+ * Error Response (Status 400 or 401(Provided by auth middleware)):
  *   Returns the error in JSON format
  */
 exports.createBook = (req, res, next) => {
@@ -124,12 +124,18 @@ exports.createBook = (req, res, next) => {
  *   Returns an error message in JSON format
  */
 exports.deleteBook = (req, res, next) => {
+  console.log('Delete book ', req.params.id);
   // Use the findOne method to retrieve data of the book to be deleted
   Book.findOne({ _id: req.params.id })
     .then((book) => {
+      console.log(book.userId);
+      console.log(req.auth.userId);
+      if (!book) {
+        return res.status(404).json({ error });
+      }
       // Check if the request userId matches the auth userId to prevent tampering
-      if (book.userId !== req.auth.userId) {
-        res.status(401).json({ message: 'Not authorized!' });
+      else if (book.userId !== req.auth.userId) {
+        return res.status(401).json({ message: 'Not authorized!' });
       } else {
         // Create a path to the file that needs to be deleted
         const filename = book.imageUrl.split('/images/')[1];
@@ -164,9 +170,12 @@ exports.modifyBook = (req, res, next) => {
   // Use the findOne method to retrieve data of the book to be modified
   Book.findOne({ _id: req.params.id })
     .then((book) => {
-      // Check if the request userId matches the auth userId to prevent tampering
-      if (book.userId !== req.auth.userId) {
-        res.status(401).json({ message: 'Not authorized!' });
+      // Check if the book exists
+      if (!book) {
+        return res.status(404).json({ error });
+        // Check if the request userId matches the auth userId to prevent tampering
+      } else if (book.userId !== req.auth.userId) {
+        return res.status(401).json({ message: 'Not authorized!' });
       } else {
         // Prepare a variable to contain modifications
         let updatedBook = {};
@@ -220,7 +229,7 @@ exports.modifyBook = (req, res, next) => {
 // Success Response (Status 201):
 //   Returns the updated book in JSON format
 //
-// Error Response (Status 404):
+// Error Response (Status 404 or 401):
 //   Returns an error message in JSON format if the book is not found
 exports.rateBook = (req, res, next) => {
   // Find the book by its ID
@@ -229,34 +238,36 @@ exports.rateBook = (req, res, next) => {
       // Check if the book exists
       if (!book) {
         return res.status(404).json({ error });
+        // Check if the request userId matches the auth userId to prevent tampering
+      } else if (book.userId !== req.auth.userId) {
+        return res.status(401).json({ message: 'Not authorized!' });
+      } else {
+        // Create a new rating object with the user's ID and the provided rating
+        newRating = {
+          userId: req.auth.userId,
+          grade: req.body.rating,
+        };
+
+        // Add the new rating to the book's ratings array
+        book.ratings.push(newRating);
+
+        // Calculate the average rating for the book
+        let averageRating = 0.0;
+        for (let index = 0; index < book.ratings.length; index++) {
+          const element = book.ratings[index].grade;
+          averageRating += element;
+        }
+
+        book.averageRating = averageRating / book.ratings.length;
+
+        // Save the updated book with the new rating
+        book
+          .save()
+          .then((book) => res.status(201).json(book))
+          .catch((error) => res.status(404).json({ error: error.message }));
       }
-
-      // Create a new rating object with the user's ID and the provided rating
-      newRating = {
-        userId: req.auth.userId,
-        grade: req.body.rating,
-      };
-
-      // Add the new rating to the book's ratings array
-      book.ratings.push(newRating);
-
-      // Calculate the average rating for the book
-      let averageRating = 0.0;
-      for (let index = 0; index < book.ratings.length; index++) {
-        const element = book.ratings[index].grade;
-        averageRating += element;
-      }
-
-      book.averageRating = averageRating / book.ratings.length;
-
-      // Save the updated book with the new rating
-      book
-        .save()
-        .then((book) => res.status(201).json(book))
-        .catch((error) => res.status(404).json({ error: error.message }));
     })
     .catch((error) => res.status(404).json({ error }));
 };
 
-//FIXME vérifier les renvois d'erreur lors de connexion non autorisé
 //FIXME controler si un utilisateur à déjà mis une note avant d'ajouter un rating
