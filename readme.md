@@ -2,7 +2,7 @@
 Bienvenue dans le backend de "Mon Vieux Grimoire" ! Ce projet propose une API documentée avec Swagger. Le frontend correspondant est fourni par OPC, et vous pouvez le trouver ici : https://github.com/GaetanRedoutez/mon-vieux-grimoire-front.
 
 ## Prérequis
-1. Avoir Node.JS d'installé
+1. Avoir Node.JS
 
 ## Documentation API
 Une documentation Swagger détaillée est disponible à l'adresse /api-docs. Vous y trouverez une liste complète des routes disponibles, accompagnées des schémas pour faciliter la compréhension. Pour accéder aux routes protégées, veuillez suivre ces étapes :

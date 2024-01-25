@@ -43,6 +43,8 @@ router.get('/', bookControl.getAllBooks);
  *     responses:
  *       201:
  *         description: Successful response with a message "Book added!"
+ *       401:
+ *         description: Unauthorized
  *       400:
  *         description: Returns the error in JSON format
  */
@@ -81,7 +83,7 @@ router.get('/bestrating', bookControl.getBestRatingBooks);
  *           type: string
  *   responses:
  *       200:
- *         description: Successful response with an array of books
+ *         description: Successful response with a book
  *       404:
  *         description: Not found
  */
@@ -169,10 +171,12 @@ router.put('/:id', auth, multer, bookControl.modifyBook);
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/Book'
+ *             $ref: '#/components/schemas/Ratings'
  *     responses:
  *       200:
  *         description: Successful response with the book
+ *       400:
+ *         description: Already rated!
  *       401:
  *         description: Unauthorized
  *       500:

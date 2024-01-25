@@ -7,7 +7,7 @@ const options = {
       title: 'Mon Vieux Grimoire App',
       description:
         'API de gestion des livres et des utilisateurs pour le site "Mon vieux grimoire"',
-      version: '0.1.0',
+      version: '0.1.1',
     },
     components: {
       securitySchemes: {
@@ -57,6 +57,14 @@ const options = {
             'ratings',
             'averageRating',
           ],
+        },
+        Ratings: {
+          type: 'object',
+          properties: {
+            userId: { type: 'string', required: true },
+            grade: { type: 'number', required: true },
+          },
+          required: ['userId', 'grade'],
         },
       },
     },
