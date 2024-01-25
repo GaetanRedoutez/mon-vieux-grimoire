@@ -1,5 +1,5 @@
 # Mon Vieux Grimoire - Backend
-Bienvenue dans le backend de "Mon Vieux Grimoire" ! Ce projet propose une API documentée avec Swagger. Le frontend correspondant est fourni par OPC, et vous pouvez le trouver ici.
+Bienvenue dans le backend de "Mon Vieux Grimoire" ! Ce projet propose une API documentée avec Swagger. Le frontend correspondant est fourni par OPC, et vous pouvez le trouver ici : https://github.com/GaetanRedoutez/mon-vieux-grimoire-front.
 
 ## Prérequis
 1. Avoir Node.JS d'installé
