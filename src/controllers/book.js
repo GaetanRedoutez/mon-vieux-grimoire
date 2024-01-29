@@ -272,5 +272,3 @@ exports.rateBook = (req, res, next) => {
     })
     .catch((error) => res.status(404).json({ error }));
 };
-
-//FIXME controler si un utilisateur à déjà mis une note avant d'ajouter un rating

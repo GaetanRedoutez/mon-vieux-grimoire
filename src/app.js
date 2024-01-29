@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
@@ -14,9 +16,7 @@ app.use(bodyParser.json());
 
 async function main() {
   // MongoDB connection string
-  const connectionString =
-    'mongodb+srv://redoutezgaetan:PVG7aTPwZdUdmPBB@mon-vieux-grimoire-clus.gxf76jf.mongodb.net/mon-vieux-grimoire?retryWrites=true&w=majority';
-
+  const connectionString = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@mon-vieux-grimoire-clus.gxf76jf.mongodb.net/mon-vieux-grimoire?retryWrites=true&w=majority`;
   try {
     // Connect to MongoDB using Mongoose
     await mongoose.connect(connectionString);
