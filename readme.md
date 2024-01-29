@@ -15,4 +15,6 @@ Si vous souhaitez exécuter localement le backend, suivez ces étapes :
 
 1. Clonez ce dépôt.
 2. Installez les dépendances avec la commande : npm install.
-3. Démarrez le serveur avec la commande ```node server```
+3. Créer un fichier .env pour ajouter les logs de connexion à MongoDB
+4. Coller ces informations dans le fichier .env : ```MONGO_USER = redoutezgaetan``` ```MONGO_PASSWORD = PVG7aTPwZdUdmPBB```
+5. Démarrez le serveur avec la commande ```node server```
