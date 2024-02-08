@@ -8,7 +8,7 @@ const multer = require('../middlewares/multer');
 // Controller functions for book operations
 const bookControl = require('../controllers/book');
 
-/**
+/** Swagger definition
  * @swagger
  * /api/books:
  *   get:
@@ -24,7 +24,7 @@ const bookControl = require('../controllers/book');
  */
 router.get('/', bookControl.getAllBooks);
 
-/**
+/** Swagger definition
  * @swagger
  * /api/books:
  *   post:
@@ -37,9 +37,15 @@ router.get('/', bookControl.getAllBooks);
  *     requestBody:
  *       required: true
  *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/Book'
+ *          multipart/form-data:
+ *            schema:
+ *              type: object
+ *              properties:
+ *                image:
+ *                  type: string
+ *                  format: binary
+ *                book:
+ *                  $ref: '#/components/schemas/Book'
  *     responses:
  *       201:
  *         description: Successful response with a message "Book added!"
@@ -50,7 +56,7 @@ router.get('/', bookControl.getAllBooks);
  */
 router.post('/', auth, multer, bookControl.createBook);
 
-/**
+/** Swagger definition
  * @swagger
  * /api/books/bestrating:
  *   get:
@@ -66,7 +72,7 @@ router.post('/', auth, multer, bookControl.createBook);
  */
 router.get('/bestrating', bookControl.getBestRatingBooks);
 
-/**
+/** Swagger definition
  * @swagger
  * /api/books/{id}:
  *   get:
@@ -89,7 +95,7 @@ router.get('/bestrating', bookControl.getBestRatingBooks);
  */
 router.get('/:id', bookControl.getOneBook);
 
-/**
+/** Swagger definition
  * @swagger
  * /api/books/{id}:
  *   delete:
@@ -116,7 +122,7 @@ router.get('/:id', bookControl.getOneBook);
  */
 router.delete('/:id', auth, bookControl.deleteBook);
 
-/**
+/** Swagger definition
  * @swagger
  * /api/books/{id}:
  *   put:
@@ -136,9 +142,15 @@ router.delete('/:id', auth, bookControl.deleteBook);
  *     requestBody:
  *       required: true
  *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/Book'
+ *          multipart/form-data:
+ *            schema:
+ *              type: object
+ *              properties:
+ *                image:
+ *                  type: string
+ *                  format: binary
+ *                book:
+ *                  $ref: '#/components/schemas/Book'
  *   responses:
  *       200:
  *         description: Successful response with a message "Book updated!" in JSON format
@@ -149,7 +161,7 @@ router.delete('/:id', auth, bookControl.deleteBook);
  */
 router.put('/:id', auth, multer, bookControl.modifyBook);
 
-/**
+/** Swagger definition
  * @swagger
  * /api/books/{id}/rating:
  *   post:
@@ -183,4 +195,5 @@ router.put('/:id', auth, multer, bookControl.modifyBook);
  *         description: Internal server error
  */
 router.post('/:id/rating', auth, bookControl.rateBook);
+
 module.exports = router;

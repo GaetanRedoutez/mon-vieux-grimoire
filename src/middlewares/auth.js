@@ -13,7 +13,7 @@ module.exports = (req, res, next) => {
     const token = req.headers.authorization.split(' ')[1];
 
     // Secret key used to sign the JWT
-    const jwtKey = 'JWT_TOKEN'; //TODO Clé pour dev mais faut mettre quoi en prod ?
+    const jwtKey = process.env.JWT_SECRET_KEY;
 
     // Verify the token using the secret key
     const verifiedToken = jwt.verify(token, jwtKey);

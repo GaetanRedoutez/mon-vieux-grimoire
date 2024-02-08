@@ -77,7 +77,7 @@ exports.login = (req, res, next) => {
               {
                 userId: user._id,
               },
-              'JWT_TOKEN',
+              process.env.JWT_SECRET_KEY,
               { expiresIn: '24h' }
             ),
           });

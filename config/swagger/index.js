@@ -80,7 +80,7 @@ const options = {
       { name: 'Books', description: 'Operations related to book management' },
     ],
   },
-  apis: ['./routes/user.js', './routes/book.js'],
+  apis: ['./src/routes/user.js', './src/routes/book.js'],
 };
 
 const swaggerSpec = swaggerJsdoc(options);

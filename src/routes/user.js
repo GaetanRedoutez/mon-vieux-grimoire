@@ -2,7 +2,8 @@ const express = require('express');
 const router = express.Router();
 
 const userControl = require('../controllers/user');
-/**
+
+/** Swagger definition
  * @swagger
  * /api/auth/signup:
  *   post:
@@ -26,7 +27,7 @@ const userControl = require('../controllers/user');
  */
 router.post('/signup', userControl.signup);
 
-/**
+/** Swagger definition
  * @swagger
  * /api/auth/login:
  *   post:

@@ -8,8 +8,8 @@ const path = require('path');
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./config/swagger/index');
 
-const userRoutes = require('./routes/user');
-const bookRoutes = require('./routes/book');
+const userRoutes = require('./src/routes/user');
+const bookRoutes = require('./src/routes/book');
 
 const app = express();
 app.use(bodyParser.json());
@@ -30,7 +30,7 @@ async function main() {
   }
 }
 
-main().catch((err) => console.log(err));
+main().catch((err) => console.error(err));
 
 // Middleware for handling CORS headers
 app.use((req, res, next) => {
@@ -51,7 +51,7 @@ app.use('/api/books', bookRoutes);
 app.use('/api/auth', userRoutes);
 
 // Serve static images from the 'images' directory
-app.use('/images', express.static(path.join(__dirname, 'images')));
+app.use('/images', express.static(path.join(__dirname, 'public/images')));
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 

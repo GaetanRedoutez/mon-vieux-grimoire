@@ -1,6 +1,7 @@
 const fs = require('node:fs');
 
 const Book = require('../models/Book');
+const resizeImage = require('../lib/sharp');
 
 /**
  * Controller to get all books
@@ -93,16 +94,22 @@ exports.createBook = (req, res, next) => {
   delete bookObject._id;
   delete bookObject._userId;
 
+  const imagePath = `${req.protocol}://${req.get('host')}/images`;
+  const imageName = `${req.file.filename.split('.')[0]}`;
+  const imageUrl = `${imagePath}/${imageName}.webp`;
+
+  console.log('Path : ', imagePath);
+  console.log('Name : ', imageName);
+  console.log('Url  :', imageUrl);
+
   // Create a new book instance with data from bookObject and file data
   const book = new Book({
     // The database will automatically assign an ID to the book object upon saving.
     ...bookObject,
     userId: req.auth.userId, // Use the userId provided by the authentication middleware
-    imageUrl: `${req.protocol}://${req.get('host')}/images/${
-      req.file.filename
-    }`,
+    imageUrl: imageUrl,
   });
-
+  resizeImage(req.file.filename);
   // Save the book to the database
   book
     .save()
@@ -124,31 +131,29 @@ exports.createBook = (req, res, next) => {
  *   Returns an error message in JSON format
  */
 exports.deleteBook = (req, res, next) => {
-  console.log('Delete book ', req.params.id);
   // Use the findOne method to retrieve data of the book to be deleted
   Book.findOne({ _id: req.params.id })
     .then((book) => {
-      console.log(book.userId);
-      console.log(req.auth.userId);
       if (!book) {
         return res.status(404).json({ error });
       }
-      // Check if the request userId matches the auth userId to prevent tampering
-      else if (book.userId !== req.auth.userId) {
-        return res.status(401).json({ message: 'Not authorized!' });
-      } else {
-        // Create a path to the file that needs to be deleted
-        const filename = book.imageUrl.split('/images/')[1];
-        const path = `images/${filename}`;
 
-        // Use the unlink method from Node's fs module to delete the file
-        fs.unlink(path, () => {
-          // Use the deleteOne method to delete the database entry
-          Book.deleteOne({ _id: req.params.id })
-            .then(() => res.status(200).json({ message: 'Book deleted!' }))
-            .catch((error) => res.status(500).json({ error }));
-        });
+      // Check if the request userId matches the auth userId to prevent tampering
+      if (book.userId !== req.auth.userId) {
+        return res.status(401).json({ message: 'Not authorized!' });
       }
+
+      // Create a path to the file that needs to be deleted
+      const filename = book.imageUrl.split('/images/')[1];
+      const path = `public/images/${filename}`;
+      console.log(path);
+      // Use the unlink method from Node's fs module to delete the file
+      fs.unlink(path, () => {
+        // Use the deleteOne method to delete the database entry
+        Book.deleteOne({ _id: req.params.id })
+          .then(() => res.status(200).json({ message: 'Book deleted!' }))
+          .catch((error) => res.status(500).json({ error }));
+      });
     })
     .catch((error) => res.status(500).json({ error }));
 };
@@ -173,102 +178,121 @@ exports.modifyBook = (req, res, next) => {
       // Check if the book exists
       if (!book) {
         return res.status(404).json({ error });
-        // Check if the request userId matches the auth userId to prevent tampering
-      } else if (book.userId !== req.auth.userId) {
-        return res.status(401).json({ message: 'Not authorized!' });
-      } else {
-        // Prepare a variable to contain modifications
-        let updatedBook = {};
-
-        // If modifications don't concern the file
-        if (!req.body.book) {
-          // Remove _id and _userId from req.body to prevent tampering
-          delete req.body._id;
-          delete req.body.userId;
-
-          // Set updatedBook with modification info
-          updatedBook = {
-            ...req.body,
-            userId: req.auth.userId,
-          };
-
-          // If modifications concern the file
-        } else {
-          // Parse req.body.book to create a bookObject
-          const bookObject = JSON.parse(req.body.book);
-
-          // Remove _id and _userId from bookObject to prevent tampering
-          delete bookObject._id;
-          delete bookObject.userId;
-
-          // Set updatedBook with modification info
-          updatedBook = {
-            ...bookObject,
-            userId: req.auth.userId,
-            imageUrl: `${req.protocol}://${req.get('host')}/images/${
-              req.file.filename
-            }`,
-          };
-        }
-
-        // Use the updateOne method to apply modifications
-        Book.updateOne({ _id: req.params.id }, updatedBook)
-          .then(() => res.status(201).json({ message: 'Book updated!' }))
-          .catch((error) => res.status(500).json({ error }));
       }
+
+      // Check if the request userId matches the auth userId to prevent tampering
+      if (book.userId !== req.auth.userId) {
+        return res.status(401).json({ message: 'Not authorized!' });
+      }
+
+      // Prepare a variable to contain modifications
+      let updatedBook = {};
+
+      // If modifications don't concern the file
+      if (!req.body.book) {
+        // Remove _id and _userId from req.body to prevent tampering
+        delete req.body._id;
+        delete req.body.userId;
+
+        // Set updatedBook with modification info
+        updatedBook = {
+          ...req.body,
+          userId: req.auth.userId,
+        };
+
+        // If modifications concern the file
+      } else {
+        // Create a path to the file that needs to be deleted
+        const filename = book.imageUrl.split('/images/')[1];
+        const path = `public/images/${filename}`;
+
+        // Use the unlink method from Node's fs module to delete the file
+        fs.unlink(path, (error) => {
+          if (error) {
+            console.log(error);
+          }
+        });
+
+        // Parse req.body.book to create a bookObject
+        const bookObject = JSON.parse(req.body.book);
+
+        // Remove _id and _userId from bookObject to prevent tampering
+        delete bookObject._id;
+        delete bookObject.userId;
+
+        const imagePath = `${req.protocol}://${req.get('host')}/images`;
+        const imageName = `${req.file.filename.split('.')[0]}`;
+        const imageUrl = `${imagePath}/${imageName}.webp`;
+
+        // Set updatedBook with modification info
+        updatedBook = {
+          ...bookObject,
+          userId: req.auth.userId,
+          imageUrl: imageUrl,
+        };
+        resizeImage(req.file.filename);
+      }
+
+      // Use the updateOne method to apply modifications
+      Book.updateOne({ _id: req.params.id }, updatedBook)
+        .then(() => res.status(201).json({ message: 'Book updated!' }))
+        .catch((error) => res.status(500).json({ error }));
     })
     .catch((error) => res.status(500).json({ error }));
 };
 
-// Controller to rate a book
-//
-// @param {*} req HTTP request
-// @param {*} res HTTP response
-// @param {*} next Go to the next middleware
-//
-// Success Response (Status 201):
-//   Returns the updated book in JSON format
-//
-// Error Response (Status 404 or 401):
-//   Returns an error message in JSON format if the book is not found
+/** Controller to rate a book
+ *
+ * @param {*} req HTTP request
+ * @param {*} res HTTP response
+ * @param {*} next Go to the next middleware
+ *
+ * Success Response (Status 201):
+ *   Returns the updated book in JSON format
+ *
+ * Error Response (Status 404 or 401):
+ * Returns an error message in JSON format if the book is not found
+ */
 exports.rateBook = (req, res, next) => {
   // Find the book by its ID
   Book.findOne({ _id: req.params.id })
     .then((book) => {
-      console.log(book);
       // Check if the book exists
       if (!book) {
-        console.log('!book');
         return res.status(404).json({ error });
-      } else {
-        if (!book.ratings.find((rating) => rating.userId === req.auth.userId)) {
-          // Create a new rating object with the user's ID and the provided rating
-          newRating = {
-            userId: req.auth.userId,
-            grade: req.body.rating,
-          };
-
-          // Add the new rating to the book's ratings array
-          book.ratings.push(newRating);
-
-          // Calculate the average rating for the book
-          let averageRating = 0.0;
-          for (let index = 0; index < book.ratings.length; index++) {
-            const element = book.ratings[index].grade;
-            averageRating += element;
-          }
-
-          book.averageRating = averageRating / book.ratings.length;
-
-          // Save the updated book with the new rating
-          book
-            .save()
-            .then((book) => res.status(201).json(book))
-            .catch((error) => res.status(404).json({ error: error.message }));
-        } else {
-          return res.status(400).json({ message: 'Already rated!' });
-        }
       }
+
+      const hasAlreadyRated = book.ratings.find(
+        (rating) => rating.userId === req.auth.userId
+      );
+
+      if (hasAlreadyRated) {
+        return res.status(400).json({ message: 'Already rated!' });
+      }
+
+      // Create a new rating object with the user's ID and the provided rating
+      newRating = {
+        userId: req.auth.userId,
+        grade: req.body.rating,
+      };
+
+      // Add the new rating to the book's ratings array
+      book.ratings.push(newRating);
+
+      // Calculate the average rating for the book
+      let averageRating = 0.0;
+      for (let index = 0; index < book.ratings.length; index++) {
+        const element = book.ratings[index].grade;
+        averageRating += element;
+      }
+
+      book.averageRating = averageRating / book.ratings.length;
+
+      // Save the updated book with the new rating
+      book
+        .save()
+        .then((book) => res.status(201).json(book))
+        .catch((error) => res.status(404).json({ error: error.message }));
     })
     .catch((error) => res.status(404).json({ error }));
 };

@@ -1,9 +1,9 @@
 TODO global au projet
 
 ✔ Readme.md @done(24-01-24 11:07)
-☐ Swagger
-  ✔ Config global @done(24-01-24 10:36)
-  ☐ Problème de retour sur les req 
-☐ Green Code
-☐ Alléger le code
-☐ Revoir la structure de fichier
+✔ Swagger @done(24-02-08 10:01)
+✔ Green Code @done(24-02-08 10:01)
+✔ Alléger le code @done(24-02-08 10:01)
+✔ Revoir la structure de fichier @done(24-02-08 10:01)
+✔ Voir mongoose-validator @done(24-02-08 10:00)
+☐ Contrôler le fonctionnement de sharp et l'architecture des dossier public

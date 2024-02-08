@@ -2,7 +2,6 @@ const http = require('http');
 const app = require('./app');
 
 const port = 4000;
-
 // Set the port for the Express app
 app.set('port', port);
 
