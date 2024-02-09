@@ -1,7 +1,7 @@
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
 
-const User = require('../models/User');
+const User = require('../models/User')
 
 /**
  * Controller function for user signup
@@ -24,17 +24,17 @@ exports.signup = (req, res, next) => {
       // Create a new user instance with the hashed password
       const newUser = new User({
         email: req.body.email,
-        password: hashedPwd,
-      });
+        password: hashedPwd
+      })
 
       // Save the new user to the database
       newUser
         .save()
         .then(() => res.status(201).json({ message: 'New user created !' }))
-        .catch((error) => res.status(400).json({ error }));
+        .catch((error) => res.status(400).json({ error }))
     })
-    .catch((error) => res.status(500).json({ error }));
-};
+    .catch((error) => res.status(500).json({ error }))
+}
 
 /**
  * Controller function for user login
@@ -57,7 +57,7 @@ exports.login = (req, res, next) => {
       if (!user) {
         return res
           .status(401)
-          .json({ error: 'Paire identifiant/mot de passe incorrect' });
+          .json({ error: 'Paire identifiant/mot de passe incorrect' })
       }
       // Compare the provided password with the hashed password in the database
       bcrypt
@@ -67,7 +67,7 @@ exports.login = (req, res, next) => {
           if (!valid) {
             return res
               .status(401)
-              .json({ error: 'Paire identifiant/mot de passe incorrect' });
+              .json({ error: 'Paire identifiant/mot de passe incorrect' })
           }
 
           // If the credentials are valid, generate a JWT token and send it in the response
@@ -75,14 +75,14 @@ exports.login = (req, res, next) => {
             userId: user._id,
             token: jwt.sign(
               {
-                userId: user._id,
+                userId: user._id
               },
               process.env.JWT_SECRET_KEY,
               { expiresIn: '24h' }
-            ),
-          });
+            )
+          })
         })
-        .catch((error) => res.status(500).json({ error }));
+        .catch((error) => res.status(500).json({ error }))
     })
-    .catch((error) => res.status(500).json({ error }));
-};
+    .catch((error) => res.status(500).json({ error }))
+}

@@ -1,12 +1,12 @@
-const express = require('express');
-const router = express.Router();
+const express = require('express')
+const router = express.Router()
 
 // Middleware for authentication and file handling
-const auth = require('../middlewares/auth');
-const multer = require('../middlewares/multer');
+const auth = require('../middlewares/auth')
+const multer = require('../middlewares/multer')
 
 // Controller functions for book operations
-const bookControl = require('../controllers/book');
+const bookControl = require('../controllers/book')
 
 /** Swagger definition
  * @swagger
@@ -22,7 +22,7 @@ const bookControl = require('../controllers/book');
  *       500:
  *         description: Internal server error
  */
-router.get('/', bookControl.getAllBooks);
+router.get('/', bookControl.getAllBooks)
 
 /** Swagger definition
  * @swagger
@@ -54,7 +54,7 @@ router.get('/', bookControl.getAllBooks);
  *       400:
  *         description: Returns the error in JSON format
  */
-router.post('/', auth, multer, bookControl.createBook);
+router.post('/', auth, multer, bookControl.createBook)
 
 /** Swagger definition
  * @swagger
@@ -70,7 +70,7 @@ router.post('/', auth, multer, bookControl.createBook);
  *       404:
  *         description: Returns the error in JSON format
  */
-router.get('/bestrating', bookControl.getBestRatingBooks);
+router.get('/bestrating', bookControl.getBestRatingBooks)
 
 /** Swagger definition
  * @swagger
@@ -93,7 +93,7 @@ router.get('/bestrating', bookControl.getBestRatingBooks);
  *       404:
  *         description: Not found
  */
-router.get('/:id', bookControl.getOneBook);
+router.get('/:id', bookControl.getOneBook)
 
 /** Swagger definition
  * @swagger
@@ -120,7 +120,7 @@ router.get('/:id', bookControl.getOneBook);
  *       500:
  *         description: Internal server error
  */
-router.delete('/:id', auth, bookControl.deleteBook);
+router.delete('/:id', auth, bookControl.deleteBook)
 
 /** Swagger definition
  * @swagger
@@ -159,7 +159,7 @@ router.delete('/:id', auth, bookControl.deleteBook);
  *       500:
  *         description: Internal server error
  */
-router.put('/:id', auth, multer, bookControl.modifyBook);
+router.put('/:id', auth, multer, bookControl.modifyBook)
 
 /** Swagger definition
  * @swagger
@@ -194,6 +194,6 @@ router.put('/:id', auth, multer, bookControl.modifyBook);
  *       500:
  *         description: Internal server error
  */
-router.post('/:id/rating', auth, bookControl.rateBook);
+router.post('/:id/rating', auth, bookControl.rateBook)
 
-module.exports = router;
+module.exports = router

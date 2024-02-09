@@ -1,4 +1,4 @@
-const jwt = require('jsonwebtoken');
+const jwt = require('jsonwebtoken')
 
 /**
  * Authentication middleware using jsonwebtoken for token verification
@@ -10,22 +10,22 @@ const jwt = require('jsonwebtoken');
 module.exports = (req, res, next) => {
   try {
     // Extract the token from the Authorization header
-    const token = req.headers.authorization.split(' ')[1];
+    const token = req.headers.authorization.split(' ')[1]
 
     // Secret key used to sign the JWT
-    const jwtKey = process.env.JWT_SECRET_KEY;
+    const jwtKey = process.env.JWT_SECRET_KEY
 
     // Verify the token using the secret key
-    const verifiedToken = jwt.verify(token, jwtKey);
+    const verifiedToken = jwt.verify(token, jwtKey)
 
     // Attach the userId from the token to the request object
     req.auth = {
-      userId: verifiedToken.userId,
-    };
+      userId: verifiedToken.userId
+    }
 
     // Continue to the next middleware
-    next();
+    next()
   } catch (error) {
-    return res.status(401).json({ error });
+    return res.status(401).json({ error })
   }
-};
+}

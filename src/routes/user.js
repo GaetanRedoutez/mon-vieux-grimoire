@@ -1,7 +1,7 @@
-const express = require('express');
-const router = express.Router();
+const express = require('express')
+const router = express.Router()
 
-const userControl = require('../controllers/user');
+const userControl = require('../controllers/user')
 
 /** Swagger definition
  * @swagger
@@ -25,7 +25,7 @@ const userControl = require('../controllers/user');
  *       500:
  *         description: Internal server error
  */
-router.post('/signup', userControl.signup);
+router.post('/signup', userControl.signup)
 
 /** Swagger definition
  * @swagger
@@ -49,6 +49,6 @@ router.post('/signup', userControl.signup);
  *       500:
  *         description: Internal server error
  */
-router.post('/login', userControl.login);
+router.post('/login', userControl.login)
 
-module.exports = router;
+module.exports = router

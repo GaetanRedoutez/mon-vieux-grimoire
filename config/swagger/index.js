@@ -1,4 +1,4 @@
-const swaggerJsdoc = require('swagger-jsdoc');
+const swaggerJsdoc = require('swagger-jsdoc')
 
 const options = {
   definition: {
@@ -7,24 +7,24 @@ const options = {
       title: 'Mon Vieux Grimoire App',
       description:
         'API de gestion des livres et des utilisateurs pour le site "Mon vieux grimoire"',
-      version: '0.1.1',
+      version: '0.1.1'
     },
     components: {
       securitySchemes: {
         bearerAuth: {
           type: 'http',
           scheme: 'bearer',
-          bearerFormat: 'JWT',
-        },
+          bearerFormat: 'JWT'
+        }
       },
       schemas: {
         User: {
           type: 'object',
           properties: {
             email: { type: 'string', required: true, unique: true },
-            password: { type: 'string', required: true },
+            password: { type: 'string', required: true }
           },
-          required: ['email', 'password'],
+          required: ['email', 'password']
         },
         Book: {
           type: 'object',
@@ -41,11 +41,11 @@ const options = {
                 type: 'object',
                 properties: {
                   userId: { type: 'string', required: true },
-                  grade: { type: 'number', required: true },
-                },
-              },
+                  grade: { type: 'number', required: true }
+                }
+              }
             },
-            averageRating: { type: 'number', required: true },
+            averageRating: { type: 'number', required: true }
           },
           required: [
             'userId',
@@ -55,34 +55,30 @@ const options = {
             'year',
             'genre',
             'ratings',
-            'averageRating',
-          ],
+            'averageRating'
+          ]
         },
         Ratings: {
           type: 'object',
           properties: {
             userId: { type: 'string', required: true },
-            grade: { type: 'number', required: true },
+            grade: { type: 'number', required: true }
           },
-          required: ['userId', 'grade'],
-        },
-      },
-    },
-    tags: {
-      name: 'Auth',
-      description: 'Operations related to user authentication',
+          required: ['userId', 'grade']
+        }
+      }
     },
     tags: [
       {
         name: 'Auth',
-        description: 'Operations related to user authentication',
+        description: 'Operations related to user authentication'
       },
-      { name: 'Books', description: 'Operations related to book management' },
-    ],
+      { name: 'Books', description: 'Operations related to book management' }
+    ]
   },
-  apis: ['./src/routes/user.js', './src/routes/book.js'],
-};
+  apis: ['./src/routes/user.js', './src/routes/book.js']
+}
 
-const swaggerSpec = swaggerJsdoc(options);
+const swaggerSpec = swaggerJsdoc(options)
 
-module.exports = swaggerSpec;
+module.exports = swaggerSpec

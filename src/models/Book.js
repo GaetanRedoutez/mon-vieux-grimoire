@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require('mongoose')
 
 const bookSchema = mongoose.Schema({
   userId: { type: String, required: true },
@@ -10,14 +10,13 @@ const bookSchema = mongoose.Schema({
   ratings: [
     {
       userId: { type: String, required: true },
-      grade: { type: Number, required: true },
-    },
+      grade: { type: Number, required: true }
+    }
   ],
-  averageRating: { type: Number, required: true },
-});
+  averageRating: { type: Number, required: true }
+})
 
-/**
- * Mongoose model :
+/** Mongoose model :
  * - userId: String (required) - ID of the user who added the book
  * - title: String (required) - Title of the book
  * - author: String (required) - Author of the book
@@ -29,4 +28,4 @@ const bookSchema = mongoose.Schema({
  *    - grade: Number (required) - Numeric rating given by the user
  * - averageRating: Number (required) - Average rating calculated from user ratings
  */
-module.exports = mongoose.model('Book', bookSchema);
+module.exports = mongoose.model('Book', bookSchema)
