@@ -1,7 +1,7 @@
 const fs = require('node:fs')
 
 const Book = require('../models/Book')
-const resizeImage = require('../lib/sharp')
+const resizeImage = require('../utils/image')
 
 /**
  * Controller to get all books

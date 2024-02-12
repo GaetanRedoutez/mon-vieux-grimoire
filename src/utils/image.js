@@ -1,11 +1,13 @@
 const sharp = require('sharp')
 const fs = require('node:fs')
 
-const resizeImage = async (fileName) => {
+/**
+ *
+ * @param {*} fileName
+ */
+const resize = async (fileName) => {
   const fileIn = './public/temp/' + fileName
   const fileOut = './public/images/' + fileName.split('.')[0] + '.webp'
-  console.log(fileIn)
-  console.log(fileOut)
   try {
     fs.readFile(fileIn, (err, data) => {
       if (err) {
@@ -35,4 +37,4 @@ const resizeImage = async (fileName) => {
   }
 }
 
-module.exports = resizeImage
+module.exports = resize
