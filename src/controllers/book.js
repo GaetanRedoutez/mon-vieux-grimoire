@@ -142,7 +142,7 @@ exports.deleteBook = (req, res, next) => {
       // Create a path to the file that needs to be deleted
       const filename = book.imageUrl.split('/images/')[1]
       const path = `public/images/${filename}`
-      console.log(path)
+
       // Use the unlink method from Node's fs module to delete the file
       fs.unlink(path, () => {
         // Use the deleteOne method to delete the database entry
@@ -205,7 +205,7 @@ exports.modifyBook = (req, res, next) => {
         // Use the unlink method from Node's fs module to delete the file
         fs.unlink(path, (error) => {
           if (error) {
-            console.log(error)
+            console.error(error)
           }
         })
 

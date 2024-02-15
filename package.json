@@ -1,5 +1,5 @@
 {
-  "name": "backend",
+  "name": "mon-vieux-grimoire-backend",
   "version": "1.0.0",
   "description": "API du site Mon Vieux Grimoire | Projet 7 OpenClassrooms",
   "main": "server.js",
