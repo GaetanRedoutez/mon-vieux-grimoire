@@ -1,7 +1,7 @@
 const fs = require('node:fs')
 
 const Book = require('../models/Book')
-const resizeImage = require('../utils/image')
+const { resize } = require('../utils/image')
 
 /**
  * Controller to get all books
@@ -105,7 +105,7 @@ exports.createBook = (req, res, next) => {
     userId: req.auth.userId, // Use the userId provided by the authentication middleware
     imageUrl: imagePath
   })
-  resizeImage(req.file.filename)
+  resize(req.file.filename)
   // Save the book to the database
   book
     .save()
@@ -226,7 +226,7 @@ exports.modifyBook = (req, res, next) => {
           userId: req.auth.userId,
           imageUrl: imagePath
         }
-        resizeImage(req.file.filename)
+        resize(req.file.filename)
       }
 
       // Use the updateOne method to apply modifications
