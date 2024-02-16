@@ -5,7 +5,7 @@ const fs = require('node:fs')
  *
  * @param {*} fileName
  */
-const resize = async (fileName) => {
+async function resize(fileName) {
   const fileIn = './public/temp/' + fileName
   const fileOut = './public/images/' + fileName.split('.')[0] + '.webp'
   try {
